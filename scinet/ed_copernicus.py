@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 import numpy as np
-import cPickle
+import _pickle as cPickle
 import gzip
 import io
 

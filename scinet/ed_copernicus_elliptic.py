@@ -13,11 +13,11 @@
 #   limitations under the License.
 
 import numpy as np
-import cPickle
+import pickle as cPickle
 import gzip
 import io
-from ed_copernicus import fix_jumps_series
-from ed_copernicus import fix_jumps_for_plot
+from scinet.ed_copernicus import fix_jumps_series
+from scinet.ed_copernicus import fix_jumps_for_plot
 
 
 def theta_mars_from_true_anomaly(true_anomaly_earth, true_anomaly_mars):

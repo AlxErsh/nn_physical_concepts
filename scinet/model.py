@@ -14,9 +14,13 @@
 
 import numpy as np
 import tensorflow as tf
-import cPickle as pickle
+import _pickle as pickle
 import io
 from tqdm import tqdm_notebook
+
+# Set up tf dirs
+TF_SAVE_PATH = "./tf_save/"
+TF_LOG_PATH = "./tf_log/"
 
 
 class Network(object):
@@ -122,7 +126,7 @@ class Network(object):
         """
         with self.graph.as_default():
             saver = tf.train.Saver()
-            saver.save(self.session, io.tf_save_path + file_name + '.ckpt')
+            saver.save(self.session, TF_SAVE_PATH + file_name + '.ckpt')
             params = {'latent_size': self.latent_size,
                       'input_size': self.input_size,
                       'encoder_num_units': self.encoder_num_units,
@@ -132,9 +136,9 @@ class Network(object):
                       'time_series_length': self.time_series_length,
                       'euler_num_units': self.euler_num_units,
                       'output_size': self.output_size}
-            with open(io.tf_save_path + file_name + '.pkl', 'wb') as f:
+            with open(TF_SAVE_PATH + file_name + '.pkl', 'wb') as f:
                 pickle.dump(params, f)
-            print "Saved network to file " + file_name
+            print("Saved network to file " + file_name)
 
     #########################################
     #        Public helper functions        #
@@ -146,12 +150,12 @@ class Network(object):
         Initializes a new network from saved data.
         file_name (str): model is loaded from tf_save/file_name.ckpt
         """
-        with open(io.tf_save_path + file_name + '.pkl', 'rb') as f:
+        with open(TF_SAVE_PATH + file_name + '.pkl', 'rb') as f:
             params = pickle.load(f)
         params['load_file'] = file_name
         for p in change_params:
             params[p] = change_params[p]
-        print params
+        print(params)
         return cls(**params)
 
     #########################################
@@ -313,7 +317,7 @@ class Network(object):
             tf.summary.scalar('euler_l2_loss', self.euler_l2_loss)
             tf.summary.scalar('beta', self.beta)
             tf.summary.scalar('L2_coeff', self.euler_l2_coeff)
-            self.summary_writer = tf.summary.FileWriter(io.tf_log_path + self.name + '/', graph=self.graph)
+            self.summary_writer = tf.summary.FileWriter(TF_LOG_PATH + self.name + '/', graph=self.graph)
             self.summary_writer.flush()
             self.all_summaries = tf.summary.merge_all()
 
@@ -354,8 +358,8 @@ class Network(object):
         """
         with self.graph.as_default():
             saver = tf.train.Saver()
-            saver.restore(self.session, io.tf_save_path + file_name + '.ckpt')
-            print "Loaded network from file " + file_name
+            saver.restore(self.session, TF_SAVE_PATH + file_name + '.ckpt')
+            print("Loaded network from file " + file_name)
 
 
 ###########

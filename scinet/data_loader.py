@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import cPickle
+import _pickle as cPickle
 import gzip
 import io
 import numpy as np
