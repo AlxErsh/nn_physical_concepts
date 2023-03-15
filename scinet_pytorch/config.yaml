@@ -1,0 +1,34 @@
+device: cuda
+
+data:
+  N: 5000
+  time_series_length: 50
+  delta_t: 25
+  planet: earth
+  train_freq: 0.8
+  train_file: ./data/earth_train.plk.gz
+  valid_file: ./data/earth_val.plk.gz
+  inference_file: ./data/earth_inf.plk.gz
+train:
+  n_epochs: 20
+  batch_size: 128
+  model:
+    input_size: 1
+    latent_size: 1
+    output_size: 1
+    encoder_num_units: [200, 200, 200]
+    decoder_num_units: [200, 200, 200]
+    weights_path: ./resources/best_model.pth
+inference:
+  data:
+    time_series_length: 50
+    inference_file: ./data/earth_inf.plk.gz
+  model:
+    input_size: 1
+    latent_size: 1
+    output_size: 1
+    encoder_num_units: [200, 200, 200]
+    decoder_num_units: [200, 200, 200]
+    weights_path: ./resources/best_model.pth
+  n_epochs: 50
+  batch_size: 128
