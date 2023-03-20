@@ -6,7 +6,7 @@ from typing import List
 from scinet.ed_copernicus import fix_jumps_series
 from scinet.ed_copernicus import fix_jumps_for_plot
 
-def theta_mars_from_true_anomaly(true_anomaly_earth, true_anomaly_mars):
+def theta_mars_from_true_anomaly(true_anomaly_earth, true_anomaly_mars, ecc):
     """
     Calculate the angle of Mars with respect to a fixed star as seen from Earth
     Params:
@@ -17,9 +17,8 @@ def theta_mars_from_true_anomaly(true_anomaly_earth, true_anomaly_mars):
     a_earth = 1.00000011 * AU
     ecc_earth = 0.01671022
     a_mars = 1.52366231 * AU
-    ecc_mars = 0.09341233
     R_earth = get_radius(true_anomaly_earth, a_earth, ecc_earth)
-    R_mars = get_radius(true_anomaly_mars, a_mars, ecc_mars)
+    R_mars = get_radius(true_anomaly_mars, a_mars, ecc)
     dist = np.sqrt(R_mars**2 + R_earth**2 - 2 * R_mars * R_earth * np.cos(true_anomaly_mars - true_anomaly_earth))
     sin_theta_M = (R_earth * np.sin(true_anomaly_earth) - R_mars * np.sin(true_anomaly_mars)) / dist
     cos_theta_M = (R_earth * np.cos(true_anomaly_earth) - R_mars * np.cos(true_anomaly_mars)) / dist
@@ -98,7 +97,6 @@ def earth_elliptic_data(
     ecc_E = []
     for ecc in eccentricities:
         phi = np.vstack([get_true_anomaly(delta_t * s + t_0, T_earth, ecc) for s in range(series_length)]).T
-        #phi = fix_jumps_series(phi)
         phi_E.append(phi)
         ecc_E.append(np.full((phi.shape[0], 1), ecc))
 
@@ -138,19 +136,15 @@ def mars_elliptic_data(
     ecc_earth = 0.01671022
     T_mars = 686.97959
     
-    t_0_E = T_earth * np.random.rand(N)
-    t_0_M = T_mars * np.random.rand(N)
+    t_0 = T_earth * np.random.rand(N)
 
     phi_M = []
     theta_M = []
     ecc_M = []
     for ecc in eccentricities:
-        phi_E = np.vstack([get_true_anomaly(delta_t * s + t_0_E, T_earth, ecc_earth) for s in range(series_length)]).T
-        phi = np.vstack([get_true_anomaly(delta_t * s + t_0_M, T_mars, ecc) for s in range(series_length)]).T
-        phi_E = fix_jumps_series(phi_E)
-        phi = fix_jumps_series(phi)
-        theta = theta_mars_from_true_anomaly(phi_E, phi)
-        theta = fix_jumps_series(theta)
+        phi_E = np.vstack([get_true_anomaly(delta_t * s + t_0, T_earth, ecc_earth) for s in range(series_length)]).T
+        phi = np.vstack([get_true_anomaly(delta_t * s + t_0, T_mars, ecc) for s in range(series_length)]).T
+        theta = theta_mars_from_true_anomaly(phi_E, phi, ecc)
         phi_M.append(phi)
         theta_M.append(theta)
         ecc_M.append(np.full((phi.shape[0], 1), ecc))
