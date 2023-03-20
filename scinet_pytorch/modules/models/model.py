@@ -33,12 +33,6 @@ class Network(torch.nn.Module):
 
         # Set up time evolution network (just constant tensor)
         self.time_evolution_layer = torch.nn.Linear(self.latent_size, self.latent_size)
-        self.time_evolution_layer.weight.data.fill_(1.0)
-        self.time_evolution_layer.weight.requires_grad_(False)
-        self.time_evolution_layer.bias.data.fill_(0.0)
-        #self.time_evolution_constant = torch.zeros(size=(1, self.latent_size)).to(self.device)
-        #self.time_evolution_constant.requires_grad_()
-        #self.time_net = torch.nn.Linear(latent_size, latent_size)
 
         # Set up decoder
         self.decoder_layers = [
@@ -56,14 +50,10 @@ class Network(torch.nn.Module):
         self.decoder_layers = torch.nn.Sequential(*self.decoder_layers)
 
     def forward(self, input, ecc):
-        #print(input[:,:self.input_size].float())
         latent_code = self.encoder_layers(input[:,:self.input_size].float())
-        #print(latent_code)
         output = []
         for i in range(self.time_series_length):
-            #latent_code = latent_code + self.time_evolution_constant
             latent_code = self.time_evolution_layer(latent_code)
             latent_code_with_ecc = torch.cat([latent_code, ecc], dim=-1)
             output.append(self.decoder_layers(latent_code_with_ecc))
-            #print(self.decoder_layers(latent_code_with_ecc))
         return torch.cat(output, dim=1)
