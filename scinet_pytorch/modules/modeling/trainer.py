@@ -29,6 +29,7 @@ class Trainer():
             patience=1,
             threshold_mode="abs",
             mode="min",
+            verbose=True
         )
 
     def fit(self):
