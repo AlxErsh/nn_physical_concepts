@@ -28,8 +28,8 @@ class Inverser():
 
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer,
-            factor=0.8,
-            patience=1,
+            factor=0.5,
+            threshold=1e-5,
             threshold_mode="abs",
             mode="min",
             verbose=True
@@ -48,22 +48,20 @@ class Inverser():
     def _inverse_one_epoch(self) -> float:
         self.model.eval()
         inference_loss = MeterLoss()
-        general_loss = 0
 
-        self.optimizer.zero_grad()
-        
         for step, (data, _, ecc) in enumerate(self.inference_dataloader):
+
+            self.optimizer.zero_grad()
+
             data = data.float().to(self.device)
             ecc = ecc.float().to(self.device)
 
             outputs = self.model(data, ecc)
 
             loss = self.criterion(outputs, data)
-            general_loss += loss
+            loss.backward()
 
             inference_loss.update(loss)
-        
-        general_loss.backward()
 
         self.inference_dataloader.dataset.ecc.grad = torch.full_like(
             self.inference_dataloader.dataset.ecc.grad,
@@ -80,7 +78,7 @@ class Inverser():
     def _init_optimizer(self) -> None:
         self.optimizer = torch.optim.Adam(
             [self.inference_dataloader.dataset.ecc],
-            lr=0.001
+            lr=0.01
         )
     
     def load(self, path: str) -> None:
