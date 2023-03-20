@@ -1,2 +1,11 @@
 .ipynb_checkpoints/
 *.pyc
+
+# Data
+data/
+
+# Artifacts
+resources/
+
+# Logs
+tf_log/
