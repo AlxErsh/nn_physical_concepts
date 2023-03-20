@@ -8,7 +8,7 @@ from scinet_pytorch.modules.models import Network
 from scinet_pytorch.modules.dataset import EllipticDataset
 from scinet_pytorch.modules.modeling import Trainer
 
-def main() -> None:
+def train() -> None:
     cfg = OmegaConf.load("./scinet_pytorch/config.yaml")
     model = Network(cfg.train.model, cfg.data.time_series_length, device=cfg.device)
     model.to(cfg.device)
@@ -20,6 +20,9 @@ def main() -> None:
                       n_epochs=cfg.train.n_epochs, device=cfg.device,
                       save_path=cfg.train.model.weights_path)
     trainer.fit()
+
+def main() -> None:
+    train()
 
 if __name__ == "__main__":
     main()
