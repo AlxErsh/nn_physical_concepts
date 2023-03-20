@@ -119,7 +119,6 @@ def earth_elliptic_data(
 
 def mars_elliptic_data(
         eccentricities:List[float],
-        T:float,
         series_length:int,
         N=None,
         delta_t=25,
@@ -137,16 +136,17 @@ def mars_elliptic_data(
     delta_t = float(delta_t)
     T_earth = 365.256
     ecc_earth = 0.01671022
+    T_mars = 686.97959
     
     t_0_E = T_earth * np.random.rand(N)
-    t_0_M = T * np.random.rand(N)
+    t_0_M = T_mars * np.random.rand(N)
 
     phi_M = []
     theta_M = []
     ecc_M = []
     for ecc in eccentricities:
         phi_E = np.vstack([get_true_anomaly(delta_t * s + t_0_E, T_earth, ecc_earth) for s in range(series_length)]).T
-        phi = np.vstack([get_true_anomaly(delta_t * s + t_0_M, T, ecc) for s in range(series_length)]).T
+        phi = np.vstack([get_true_anomaly(delta_t * s + t_0_M, T_mars, ecc) for s in range(series_length)]).T
         phi_E = fix_jumps_series(phi_E)
         phi = fix_jumps_series(phi)
         theta = theta_mars_from_true_anomaly(phi_E, phi)
