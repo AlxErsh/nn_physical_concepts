@@ -86,7 +86,9 @@ class Trainer():
         self.criterion = torch.nn.MSELoss()
 
     def _init_optimizer(self) -> None:
-        self.optimizer = torch.optim.Adam(self.model.parameters())
+        self.optimizer = torch.optim.Adam(
+            self.model.parameters()
+        )
 
     def save(self, path: str) -> None:
         self.model.eval()
