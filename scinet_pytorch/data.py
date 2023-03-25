@@ -8,8 +8,8 @@ from scinet_pytorch.modules.dataset import (
 )
 
 def generate_train_data(cfg) -> None:
-    eccentricities = np.linspace(0, 0.03, 20)
     assert cfg.data.planet in ["earth", "mars"], "Planet is unknown!"
+    eccentricities = np.linspace(0, 0.2, 20)
     if cfg.data.planet == "earth":
         earth_elliptic_data(
             eccentricities,
