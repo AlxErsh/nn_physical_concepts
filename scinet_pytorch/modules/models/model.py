@@ -31,8 +31,11 @@ class Network(torch.nn.Module):
         ])
         self.encoder_layers = torch.nn.Sequential(*self.encoder_layers)
 
-        # Set up time evolution network (just constant tensor)
+        # Set up time evolution network
         self.time_evolution_layer = torch.nn.Linear(self.latent_size, self.latent_size)
+        self.time_evolution_layer.weight.data.fill_(1.0)
+        #self.time_evolution_layer.weight.requires_grad_(False)
+        self.time_evolution_layer.bias.data.fill_(0.0)
 
         # Set up decoder
         self.decoder_layers = [
