@@ -78,7 +78,8 @@ class Inverser():
     def _init_optimizer(self) -> None:
         self.optimizer = torch.optim.Adam(
             [self.inference_dataloader.dataset.ecc],
-            lr=0.01
+            lr=0.01,
+            betas=(0.7, 0.8)
         )
     
     def load(self, path: str) -> None:
